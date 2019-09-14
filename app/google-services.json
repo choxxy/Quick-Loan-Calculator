@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "404562750293",
+    "firebase_url": "https://fcm-test-9d6ac.firebaseio.com",
+    "project_id": "fcm-test-9d6ac",
+    "storage_bucket": "fcm-test-9d6ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404562750293:android:cf7adb706dfe1eb090dddc",
+        "android_client_info": {
+          "package_name": "tech.garageprojects.loancalculator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "404562750293-2i0uj8na4lt38i4ur9rfmtp34b581fv7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2daXKVECb79ir9tOy4-8mRrqICoQogVs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "404562750293-2i0uj8na4lt38i4ur9rfmtp34b581fv7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
