@@ -4,11 +4,12 @@ import tech.garageprojects.loancalculator.model.Loan
 import tech.garageprojects.loancalculator.model.Payment
 import java.math.BigDecimal
 import java.util.*
+import javax.inject.Inject
 
-/**A differentiated payments your payment every month will decrease because the debt will be
+/**In differentiated payments, your payment every month will decrease because the debt will be
  *  extinguished in equal instalments and interest will accrue monthly on the balance of the debt.
  */
-class DifferentiatedCalculator : AbstractCalculator() {
+class DifferentiatedCalculator @Inject constructor(): AbstractCalculator() {
 
     override fun calculate(loan: Loan) {
         val amount = calculateAmountWithDownPayment(loan)

@@ -5,6 +5,7 @@ import tech.garageprojects.loancalculator.model.Payment
 import java.math.BigDecimal
 import java.math.BigDecimal.ONE
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Annuity payment remains unchanged throughout the duration of the credit agreement.
@@ -13,7 +14,7 @@ import java.util.*
  */
 
 
-class AnnuityCalculator : AbstractCalculator() {
+class AnnuityCalculator @Inject constructor(): AbstractCalculator() {
 
 
     override fun calculate(loan: Loan) {
