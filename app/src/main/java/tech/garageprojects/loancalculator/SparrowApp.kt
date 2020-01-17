@@ -1,23 +1,21 @@
 package tech.garageprojects.loancalculator
 
+import android.app.Application
 import android.content.Context
-import androidx.multidex.MultiDex
-import androidx.multidex.MultiDexApplication
 import tech.garageprojects.loancalculator.di.AppComponent
 import tech.garageprojects.loancalculator.di.DaggerAppComponent
 
-open class SparrowApp: MultiDexApplication(){
+open class SparrowApp : Application() {
 
-    val appComponent: AppComponent by lazy{
+    val appComponent: AppComponent by lazy {
         DaggerAppComponent.factory().create(applicationContext)
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
-        MultiDex.install(this)
     }
 }
+
+val Context.appComponent: AppComponent
+    get() = (this.applicationContext as SparrowApp).appComponent

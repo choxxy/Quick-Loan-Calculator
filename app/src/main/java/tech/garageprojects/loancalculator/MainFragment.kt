@@ -9,48 +9,40 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.StyleSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.gms.ads.AdRequest
 import kotlinx.android.synthetic.main.main_fragment.*
 import tech.garageprojects.loancalculator.model.Loan
-import tech.garageprojects.loancalculator.service.AnnuityCalculator
-import tech.garageprojects.loancalculator.service.Calculator
-import tech.garageprojects.loancalculator.service.DifferentiatedCalculator
-import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import com.google.android.gms.ads.AdRequest
+import javax.inject.Inject
 
 
+class MainFragment : Fragment(R.layout.main_fragment) {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-class MainFragment : Fragment() {
-
-
-    private lateinit var viewModel: MainViewModel
-    private var mViewModel: MainViewModel? = null
-    private var calculators = arrayOf(AnnuityCalculator(), DifferentiatedCalculator())
-    private var calculator: Calculator = AnnuityCalculator()
+    private var calculatorType = 0
+    private val viewModel by viewModels<CalculatorViewModel> { viewModelFactory }
     private val simpleDateformat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-    private val loan = Loan()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.main_fragment, container, false)
 
-        return view
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        context!!.appComponent.inject(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         rxBindViews()
-        viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+
     }
 
     override fun onPause() {
@@ -66,7 +58,6 @@ class MainFragment : Fragment() {
 
     private fun rxBindViews() {
 
-
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
 
@@ -77,7 +68,7 @@ class MainFragment : Fragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                calculator = calculators[position]
+                calculatorType = position
             }
 
         }
@@ -88,10 +79,9 @@ class MainFragment : Fragment() {
 
         schedule.setOnClickListener {
             calculate()
-            if (loan.isCalculated) {
-                val direction = MainFragmentDirections.actionMainFragmentToScheduleFragment()
-                NavHostFragment.findNavController(this).navigate(direction)
-            }
+            val direction = MainFragmentDirections.actionMainFragmentToScheduleFragment()
+            NavHostFragment.findNavController(this).navigate(direction)
+
         }
 
         startdate.setOnClickListener {
@@ -112,6 +102,26 @@ class MainFragment : Fragment() {
         enddate.text = formatText(getString(R.string.end_date, simpleDateformat.format(calendar.time)))
     }
 
+    fun calculate() {
+
+        if (!TextUtils.isEmpty(amount.text.toString())
+                && !TextUtils.isEmpty(term.text.toString())
+                && !TextUtils.isEmpty(interest.text.toString())) {
+
+           viewModel.calculate(calculatorType
+                    , amount.text.toString()
+                    , term.text.toString()
+                    , interest.text.toString()
+                    , startdate.text.toString()).observe(viewLifecycleOwner, androidx.lifecycle.Observer { loan ->
+                calculated(loan)
+            })
+
+
+        } else {
+            Toast.makeText(context!!, "Fill all the required values", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     fun showCalendar() {
 
         val c = Calendar.getInstance()
@@ -119,7 +129,7 @@ class MainFragment : Fragment() {
         val month = c.get(Calendar.MONTH)
         val day = c.get(Calendar.DAY_OF_MONTH)
 
-        val dpd = DatePickerDialog(activity!!, DatePickerDialog.OnDateSetListener { view, y, monthOfYear, dayOfMonth ->
+        val dpd = DatePickerDialog(activity!!, DatePickerDialog.OnDateSetListener { _, y, monthOfYear, dayOfMonth ->
             c.set(Calendar.YEAR, y)
             c.set(Calendar.MONTH, monthOfYear)
             c.set(Calendar.DAY_OF_MONTH, dayOfMonth)
@@ -129,39 +139,6 @@ class MainFragment : Fragment() {
         dpd.show()
 
 
-    }
-
-    fun calculate() {
-
-        if (!TextUtils.isEmpty(amount.text.toString())
-                && !TextUtils.isEmpty(term.text.toString())
-                && !TextUtils.isEmpty(interest.text.toString())) {
-
-
-            loan.amount = BigDecimal(amount.text.toString())
-            loan.period = term.text.toString().toInt()
-            loan.interest = BigDecimal(interest.text.toString())
-            loan.downPayment = BigDecimal.ZERO
-            loan.disposableCommission = BigDecimal.ZERO
-            loan.monthlyCommission = BigDecimal.ZERO
-            loan.residue = BigDecimal.ZERO
-            loan.startDate = simpleDateformat.parse(startdate.text.toString())!!
-
-            calculator.calculate(loan)
-            loan.isCalculated = true
-
-            calculated(loan)
-
-            viewModel.payments = loan.getPayments()
-
-        } else {
-            Toast.makeText(context!!, "Fill all the required values", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        mViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
     }
 
     fun calculated(loan: Loan) {

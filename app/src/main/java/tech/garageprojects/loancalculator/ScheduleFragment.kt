@@ -1,29 +1,27 @@
 package tech.garageprojects.loancalculator
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.ads.AdRequest
 import kotlinx.android.synthetic.main.fragment_schedule_list.*
-import kotlinx.android.synthetic.main.fragment_schedule_list.adView
-import kotlinx.android.synthetic.main.main_fragment.*
 import tech.garageprojects.loancalculator.model.Payment
+import javax.inject.Inject
 
 
-class ScheduleFragment : Fragment() {
+class ScheduleFragment : Fragment(R.layout.fragment_schedule_list) {
 
-    private lateinit var viewModel: MainViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by viewModels<CalculatorViewModel> { viewModelFactory }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_schedule_list, container, false)
-
-
-        return view
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        context!!.appComponent.inject(this)
     }
+
 
     override fun onPause() {
         adView.pause()
@@ -37,7 +35,7 @@ class ScheduleFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+
 
         with(list) {
             adapter = ScheduleViewAdapter(viewModel.payments, object : OnListItemInteractionListener {

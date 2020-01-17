@@ -6,13 +6,14 @@ import tech.garageprojects.loancalculator.service.AbstractCalculator
 import tech.garageprojects.loancalculator.service.AnnuityCalculator
 import tech.garageprojects.loancalculator.service.DifferentiatedCalculator
 
+
 @Module
-abstract  class CalculatorModule {
+abstract class CalculatorModule {
 
     @Binds
     abstract fun providesAnnuityCalculator(annuityCalculator: AnnuityCalculator): AbstractCalculator
 
     @Binds
-    abstract fun providesDifferentiatedCalculator( differentiatedCalculator: DifferentiatedCalculator): AbstractCalculator
+    abstract fun providesDifferentiatedCalculator(differentiatedCalculator: DifferentiatedCalculator): AbstractCalculator
 
 }
