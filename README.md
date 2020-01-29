@@ -1,4 +1,4 @@
-# Sparrow, Simple and Quick Loan calculator
+# A Quick Loan calculator
 
 ## Play Store
 
