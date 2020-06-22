@@ -3,9 +3,6 @@ package tech.garageprojects.loancalculator.model
 import java.io.Serializable
 import java.math.BigDecimal
 
-/**
- * @author Andrei Samkov
- */
 class Payment : Serializable {
     var extraPayment = BigDecimal.ZERO
     var date: String = ""
