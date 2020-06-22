@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         setupNavigation()
 
-        MobileAds.initialize(this, "ca-app-pub-6424626033677167~6005244804")
+        MobileAds.initialize(this, "")
 
     }
 
